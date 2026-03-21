@@ -38,6 +38,7 @@ const buttonVariants = cva(
   }
 )
 
+// This shared button component applies the right styles for each variant and size.
 function Button({
   className,
   variant = "default",

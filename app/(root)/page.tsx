@@ -5,6 +5,7 @@ import {HEATMAP_WIDGET_CONFIG} from "@/lib/constants";
 import {TOP_STORIES_WIDGET_CONFIG} from "@/lib/constants";
 import {MARKET_DATA_WIDGET_CONFIG} from "@/lib/constants";
 
+// This is the dashboard home page with the TradingView widgets.
 const Home = () => {
     const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`
     return (

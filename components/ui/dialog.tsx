@@ -7,30 +7,35 @@ import { Dialog as DialogPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
+// This is the root dialog component.
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
+// This is the clickable element that opens the dialog.
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
+// This renders dialog content in a portal above the page.
 function DialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
+// This is the close control for the dialog.
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+// This is the dark background behind an open dialog.
 function DialogOverlay({
   className,
   ...props
@@ -47,6 +52,7 @@ function DialogOverlay({
   )
 }
 
+// This renders the dialog panel and optional close button.
 function DialogContent({
   className,
   children,
@@ -81,6 +87,7 @@ function DialogContent({
   )
 }
 
+// This is the top section of the dialog used for titles and text.
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -91,6 +98,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// This is the action area at the bottom of the dialog.
 function DialogFooter({
   className,
   showCloseButton = false,
@@ -118,6 +126,7 @@ function DialogFooter({
   )
 }
 
+// This renders the main dialog title.
 function DialogTitle({
   className,
   ...props
@@ -131,6 +140,7 @@ function DialogTitle({
   )
 }
 
+// This renders the helper text under the dialog title.
 function DialogDescription({
   className,
   ...props

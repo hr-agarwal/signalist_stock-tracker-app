@@ -9,6 +9,7 @@ import {toast} from "sonner";
 import {signInEmail} from "better-auth/api";
 import {useRouter} from "next/navigation";
 
+// This renders the sign-in form and logs the user in on submit.
 const SignIn = () => {
     const router = useRouter()
     const {
@@ -23,6 +24,7 @@ const SignIn = () => {
         mode: 'onBlur',
     });
 
+    // This sends the form data to the server action and moves the user to the dashboard on success.
     const onSubmit = async (data: SignInFormData) => {
         try {
             const result = await signInWithEmail(data);

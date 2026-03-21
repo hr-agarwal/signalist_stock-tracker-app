@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   description: "Track real-time stock prices, get personalised alerts and explore detailed company insights.",
 };
 
+// This wraps the whole app and loads global fonts, styles, and toast messages.
 export default function RootLayout({
   children,
 }: Readonly<{

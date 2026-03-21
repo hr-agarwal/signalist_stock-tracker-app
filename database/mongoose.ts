@@ -15,6 +15,7 @@ if(!cached){
     cached = global.mongooseCache ={conn: null, promise: null};
 }
 
+// This opens a MongoDB connection once and reuses it across requests.
 export const connectToDatabase = async () => {
     if(!MONGODB_URI) throw new Error("MongoDB_URI must be set within .env");
 

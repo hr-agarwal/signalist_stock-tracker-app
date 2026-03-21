@@ -4,6 +4,7 @@ import {auth} from "@/lib/better-auth/auth";
 import {inngest} from "@/lib/inngest/client";
 import {headers} from "next/headers";
 
+// This creates a new user and sends a follow-up event for the welcome workflow.
 export const signUpWithEmail = async ({email,password,fullName, country, investmentGoals,riskTolerance,preferredIndustry}: SignUpFormData)  => {
     try{
 
@@ -23,6 +24,7 @@ export const signUpWithEmail = async ({email,password,fullName, country, investm
     }
 }
 
+// This signs in an existing user with email and password.
 export const signInWithEmail = async ({email,password}: SignInFormData)  => {
     try{
 
@@ -36,9 +38,11 @@ export const signInWithEmail = async ({email,password}: SignInFormData)  => {
 }
 
 
+// This signs the current user out using the request cookies from the server.
 export const signOut = async ()  => {
     try {
         await auth!.api.signOut({ headers: await headers()});
+        return { success: true };
     }catch(e){
         console.log('Sign out failed',e);
         return { success: false, error: 'Sign out failed' };

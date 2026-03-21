@@ -3,6 +3,7 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {cn} from "@/lib/utils";
 
+// This is a reusable text input block with a label and error message.
 const InputField = ({ name,label,placeholder,type= "text", register,error,validation,disabled,value} : FormInputProps) => {
     return (
         <div className="space-y-2 ">

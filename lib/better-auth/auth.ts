@@ -5,6 +5,7 @@ import {nextCookies} from "better-auth/next-js";
 
 let authInstance: ReturnType<typeof betterAuth> | null = null;
 
+// This builds the Better Auth server instance and reuses it after the first call.
 export const getAuth = async () => {
     if(authInstance) return authInstance;
 
@@ -33,4 +34,5 @@ export const getAuth = async () => {
     return authInstance;
 }
 
+// This exports the ready-to-use auth instance for the rest of the app.
 export const auth = await getAuth();

@@ -2,6 +2,8 @@ import Header from "@/components/Header";
 import {auth} from "@/lib/better-auth/auth";
 import {headers} from "next/headers";
 import { redirect } from "next/navigation";
+
+// This protects the main app routes and passes the logged-in user to the header.
 const Layout = async ({children} : {children : React.ReactNode} ) => {
 
     const session = await auth!.api.getSession({headers: await headers()});

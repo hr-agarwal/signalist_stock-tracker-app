@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+// This is the base command palette container.
 function Command({
   className,
   ...props
@@ -29,6 +30,7 @@ function Command({
   )
 }
 
+// This wraps the command palette inside a dialog window.
 function CommandDialog({
   title = "Command Palette",
   description = "Search for a command to run...",
@@ -60,6 +62,7 @@ function CommandDialog({
   )
 }
 
+// This renders the search input inside the command palette.
 function CommandInput({
   className,
   ...props
@@ -82,6 +85,7 @@ function CommandInput({
   )
 }
 
+// This renders the scrollable list of command results.
 function CommandList({
   className,
   ...props
@@ -98,6 +102,7 @@ function CommandList({
   )
 }
 
+// This shows the empty state when no command matches the search.
 function CommandEmpty({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
@@ -110,6 +115,7 @@ function CommandEmpty({
   )
 }
 
+// This groups related command items together.
 function CommandGroup({
   className,
   ...props
@@ -126,6 +132,7 @@ function CommandGroup({
   )
 }
 
+// This draws a separator line between command sections.
 function CommandSeparator({
   className,
   ...props
@@ -139,6 +146,7 @@ function CommandSeparator({
   )
 }
 
+// This renders one selectable command row.
 function CommandItem({
   className,
   ...props
@@ -155,6 +163,7 @@ function CommandItem({
   )
 }
 
+// This renders the small shortcut text at the end of a command item.
 function CommandShortcut({
   className,
   ...props

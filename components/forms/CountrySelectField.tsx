@@ -30,6 +30,7 @@ type CountrySelectProps = {
     required?: boolean;
 };
 
+// This is the custom country picker used inside the form controller.
 const CountrySelect = ({
                            value,
                            onChange,
@@ -39,10 +40,10 @@ const CountrySelect = ({
 }) => {
     const [open, setOpen] = useState(false);
 
-    // Get country options with flags
+    // This loads the full list of countries for the dropdown.
     const countries = countryList().getData();
 
-    // Helper function to get flag emoji
+    // This converts a two-letter country code like "IN" into a flag emoji.
     const getFlagEmoji = (countryCode: string) => {
         const codePoints = countryCode
             .toUpperCase()
@@ -115,6 +116,7 @@ const CountrySelect = ({
     );
 };
 
+// This connects the country picker to react-hook-form and shows any validation error.
 export const CountrySelectField = ({
                                        name,
                                        label,

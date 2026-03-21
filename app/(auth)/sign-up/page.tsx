@@ -13,6 +13,7 @@ import {toast} from "sonner";
 import {error} from "effect/Brand";
 
 
+// This renders the sign-up form and collects the user's investing preferences.
 const SignUp = () => {
     const router = useRouter();
     const {
@@ -33,7 +34,7 @@ const SignUp = () => {
         mode: 'onBlur'
     });
 
-
+    // This creates the account and redirects to the main app after a successful signup.
     const onSubmit = async (data: SignUpFormData) => {
         try{
           const result = await signUpWithEmail(data);

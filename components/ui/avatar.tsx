@@ -5,6 +5,7 @@ import { Avatar as AvatarPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+// This is the main avatar wrapper used for profile images.
 function Avatar({
   className,
   size = "default",
@@ -25,6 +26,7 @@ function Avatar({
   )
 }
 
+// This renders the actual avatar image when one is available.
 function AvatarImage({
   className,
   ...props
@@ -38,6 +40,7 @@ function AvatarImage({
   )
 }
 
+// This shows fallback content, like initials, when the avatar image is missing.
 function AvatarFallback({
   className,
   ...props
@@ -54,6 +57,7 @@ function AvatarFallback({
   )
 }
 
+// This renders a small badge on top of the avatar.
 function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -70,6 +74,7 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+// This groups multiple avatars together with overlap styling.
 function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -83,6 +88,7 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// This shows the extra-count bubble in an avatar group.
 function AvatarGroupCount({
   className,
   ...props

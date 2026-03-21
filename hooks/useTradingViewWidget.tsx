@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
+// This hook mounts a TradingView script into a div and cleans it up when needed.
 const useTradingViewWidget = (scriptUrl: string, config: Record<string, unknown>, height = 600) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
 

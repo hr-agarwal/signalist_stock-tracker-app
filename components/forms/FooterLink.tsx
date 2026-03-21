@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+// This shows the small link under auth forms, like "Already have an account?".
 const FooterLink = ({text, linkText, href}: FooterLinkProps) => {
     return (
         <div className="text-center pt-4">

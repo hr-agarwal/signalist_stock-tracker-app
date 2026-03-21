@@ -5,6 +5,7 @@ import NavItems from "@/components/NavItems";
 import UserDropdown from "@/components/UserDropdown";
 
 
+// This renders the top bar with the logo, navigation links, and user menu.
 const Header = ({user}: {user: User}) => {
 
     return (

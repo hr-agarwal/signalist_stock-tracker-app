@@ -4,9 +4,11 @@ import { NAV_ITEMS } from "@/lib/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// This renders the nav links and highlights the current page.
 const NavItems = () => {
     const pathname: string = usePathname();
 
+    // This checks whether a nav item should look active for the current route.
     const isActive = (path: string) => {
         if (path === '/') return pathname === '/';
         return pathname.startsWith(path);

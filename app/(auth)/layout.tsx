@@ -5,6 +5,7 @@ import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 
 
+// This layout shows the auth screens and sends signed-in users back to the dashboard.
 const Layout = async ({children} : {children : React.ReactNode} ) => {
     const session = await auth!.api.getSession({headers: await headers()})
 

@@ -6,24 +6,28 @@ import { Select as SelectPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+// This is the root select component.
 function Select({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
+// This groups related select items.
 function SelectGroup({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Group>) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />
 }
 
+// This shows the selected value in the trigger.
 function SelectValue({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+// This is the visible button that opens the select menu.
 function SelectTrigger({
   className,
   size = "default",
@@ -50,6 +54,7 @@ function SelectTrigger({
   )
 }
 
+// This renders the dropdown panel that contains select items.
 function SelectContent({
   className,
   children,
@@ -87,6 +92,7 @@ function SelectContent({
   )
 }
 
+// This renders a small label inside the select menu.
 function SelectLabel({
   className,
   ...props
@@ -100,6 +106,7 @@ function SelectLabel({
   )
 }
 
+// This renders one selectable option.
 function SelectItem({
   className,
   children,
@@ -127,6 +134,7 @@ function SelectItem({
   )
 }
 
+// This draws a separator line between select groups.
 function SelectSeparator({
   className,
   ...props
@@ -140,6 +148,7 @@ function SelectSeparator({
   )
 }
 
+// This shows the scroll-up control when the list is long.
 function SelectScrollUpButton({
   className,
   ...props
@@ -158,6 +167,7 @@ function SelectScrollUpButton({
   )
 }
 
+// This shows the scroll-down control when the list is long.
 function SelectScrollDownButton({
   className,
   ...props

@@ -5,6 +5,7 @@ import { Label as LabelPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+// This is the shared label component used with form fields.
 function Label({
   className,
   ...props

@@ -9,6 +9,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+// This is a reusable select field connected to react-hook-form.
 const SelectField = ({name,label,placeholder,options,control,error,required=false}: SelectFieldProps) => {
     return (
         <div className="space-y-2">

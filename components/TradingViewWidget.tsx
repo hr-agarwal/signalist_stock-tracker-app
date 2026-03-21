@@ -12,6 +12,7 @@ interface TradingViewWidgetProps {
     className?: string;
 }
 
+// This shows one TradingView widget and lets the hook mount the external script inside it.
 const TradingViewWidget = ({title, scriptUrl, config, height= 600, className}: TradingViewWidgetProps)=> {
     const containerRef = useTradingViewWidget( scriptUrl, config, height);
 

@@ -33,6 +33,3 @@ export const getAuth = async () => {
 
     return authInstance;
 }
-
-// This exports the ready-to-use auth instance for the rest of the app.
-export const auth = await getAuth();

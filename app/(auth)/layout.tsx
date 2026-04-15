@@ -1,13 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
-import {auth} from "@/lib/better-auth/auth";
+import {getAuth} from "@/lib/better-auth/auth";
 import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 
 
 // This layout shows the auth screens and sends signed-in users back to the dashboard.
 const Layout = async ({children} : {children : React.ReactNode} ) => {
-    const session = await auth!.api.getSession({headers: await headers()})
+    let session = null;
+
+    try {
+        const auth = await getAuth();
+        session = await auth!.api.getSession({headers: await headers()});
+    } catch (error) {
+        console.error('Auth layout session check failed:', error);
+    }
 
     if(session?.user) redirect('/')
 

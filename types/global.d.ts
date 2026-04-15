@@ -115,6 +115,12 @@ declare global {
         onWatchlistChange?: (symbol: string, isAdded: boolean) => void;
     };
 
+    type WatchlistRecord = {
+        symbol: string;
+        company: string;
+        addedAt: Date;
+    };
+
     type QuoteData = {
         c?: number;
         dp?: number;

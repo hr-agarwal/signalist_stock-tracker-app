@@ -6,11 +6,10 @@ import SelectField from "@/components/forms/SelectField";
 import {INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS} from "@/lib/constants";
 import {CountrySelectField} from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
-import {signUpEmail} from "better-auth/api";
-import {signUpWithEmail} from "@/lib/actions/auth_actions";
+import {sendUserCreatedEvent} from "@/lib/actions/auth_actions";
+import { authClient } from "@/lib/better-auth/client";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
-import {error} from "effect/Brand";
 
 
 // This renders the sign-up form and collects the user's investing preferences.
@@ -37,8 +36,22 @@ const SignUp = () => {
     // This creates the account and redirects to the main app after a successful signup.
     const onSubmit = async (data: SignUpFormData) => {
         try{
-          const result = await signUpWithEmail(data);
-          if(result.success) router.push('/');
+          const result = await authClient.signUp.email({
+              email: data.email,
+              password: data.password,
+              name: data.fullName,
+          });
+
+          if(result.error) {
+              toast.error('Sign up failed',{
+                  description: result.error.message || 'Please check your details and try again.',
+              })
+              return;
+          }
+
+          await sendUserCreatedEvent(data);
+          router.replace('/');
+          router.refresh();
         } catch(e){
             console.error(e);
             toast.error('Sign up failed',{
@@ -72,7 +85,13 @@ const SignUp = () => {
                         placeholder="xyz@gmail.com"
                         register={register}
                         error={errors.email}
-                        validation={{required: 'Email is required',pattern:/^[\w.-]+@[\w.-]+\.\w+$/,message: 'Email is required'}}
+                        validation={{
+                            required: 'Email is required',
+                            pattern: {
+                                value: /^[\w.-]+@[\w.-]+\.\w+$/,
+                                message: 'Enter a valid email address',
+                            },
+                        }}
                     />
 
                     <InputField

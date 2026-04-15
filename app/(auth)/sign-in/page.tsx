@@ -4,9 +4,8 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import InputField from '@/components/forms/InputField';
 import FooterLink from '@/components/forms/FooterLink';
-import {signInWithEmail, signUpWithEmail} from "@/lib/actions/auth_actions";
+import { authClient } from "@/lib/better-auth/client";
 import {toast} from "sonner";
-import {signInEmail} from "better-auth/api";
 import {useRouter} from "next/navigation";
 
 // This renders the sign-in form and logs the user in on submit.
@@ -27,8 +26,20 @@ const SignIn = () => {
     // This sends the form data to the server action and moves the user to the dashboard on success.
     const onSubmit = async (data: SignInFormData) => {
         try {
-            const result = await signInWithEmail(data);
-            if(result.success) router.push('/');
+            const result = await authClient.signIn.email({
+                email: data.email,
+                password: data.password,
+            });
+
+            if(result.error) {
+                toast.error('Sign in failed', {
+                    description: result.error.message || 'Please check your email and password.',
+                });
+                return;
+            }
+
+            router.replace('/');
+            router.refresh();
         } catch (e) {
             console.error(e);
             toast.error('Sign in failed', {
@@ -48,7 +59,13 @@ const SignIn = () => {
                     placeholder="contact@jsmastery.com"
                     register={register}
                     error={errors.email}
-                    validation={{ required: 'Email is required', pattern: /^\w+@\w+\.\w+$/ }}
+                    validation={{
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^[\w.-]+@[\w.-]+\.\w+$/,
+                            message: 'Enter a valid email address',
+                        },
+                    }}
                 />
 
                 <InputField

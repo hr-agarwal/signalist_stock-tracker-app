@@ -4,6 +4,7 @@ import { getDateRange, validateArticle, formatArticle } from '@/lib/utils';
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 const NEXT_PUBLIC_FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? '';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY ?? '';
 
 // This fetches JSON from an API and optionally caches it for a short time.
 async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T> {
@@ -22,6 +23,16 @@ async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T>
 }
 
 export { fetchJSON };
+
+type QuoteResponse = {
+    c?: number;
+    d?: number;
+    dp?: number;
+    h?: number;
+    l?: number;
+    o?: number;
+    pc?: number;
+};
 
 function formatInstrumentLabel(rawType: string | undefined, exchange: string): string {
     const normalizedType = (rawType || '').trim();
@@ -179,5 +190,126 @@ export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> 
     } catch (err) {
         console.error('getNews error:', err);
         throw new Error('Failed to fetch news');
+    }
+}
+
+// This fetches a simple quote snapshot for one stock symbol.
+export async function getStockQuote(symbol: string): Promise<QuoteResponse | null> {
+    const cleanSymbol = symbol.trim().toUpperCase();
+    if (!cleanSymbol) return null;
+
+    try {
+        const url = `${FINNHUB_BASE_URL}/quote?symbol=${encodeURIComponent(cleanSymbol)}&token=${NEXT_PUBLIC_FINNHUB_API_KEY}`;
+        return await fetchJSON<QuoteResponse>(url, 60);
+    } catch (err) {
+        console.error('getStockQuote error:', err);
+        return null;
+    }
+}
+
+// This builds a more varied company-news feed by combining symbol-specific and relevant general stories.
+export async function getCompanySpecificNews(symbol: string, company: string): Promise<MarketNewsArticle[]> {
+    const cleanSymbol = symbol.trim().toUpperCase();
+    const cleanCompany = company.trim().toLowerCase();
+
+    if (!cleanSymbol) return [];
+
+    try {
+        const companyNews = await getNews([cleanSymbol]);
+        const generalNews = await getNews();
+
+        const relatedGeneral = generalNews.filter((article) => {
+            const haystack = `${article.headline} ${article.summary} ${article.related}`.toLowerCase();
+            return haystack.includes(cleanSymbol.toLowerCase()) || (cleanCompany && haystack.includes(cleanCompany));
+        });
+
+        const merged = [...companyNews, ...relatedGeneral];
+        const seen = new Set<string>();
+        const sources = new Set<string>();
+        const diversified: MarketNewsArticle[] = [];
+
+        for (const article of merged) {
+            const key = article.url || `${article.source}-${article.headline}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+
+            // Prefer adding new sources early to avoid showing one outlet repeatedly.
+            if (!sources.has(article.source) || diversified.length < 3) {
+                diversified.push(article);
+                sources.add(article.source);
+            } else if (diversified.length < 8) {
+                diversified.push(article);
+            }
+
+            if (diversified.length >= 8) break;
+        }
+
+        return diversified;
+    } catch (err) {
+        console.error('getCompanySpecificNews error:', err);
+        return [];
+    }
+}
+
+// This builds a short company-specific summary from recent news using Gemini.
+export async function getCompanyNewsSummary(
+    symbol: string,
+    company: string,
+    news: MarketNewsArticle[],
+    quote?: QuoteResponse | null
+): Promise<string> {
+    const cleanSymbol = symbol.trim().toUpperCase();
+    const cleanCompany = company.trim() || cleanSymbol;
+
+    if (!cleanSymbol || news.length === 0) {
+        return `No recent company-specific news summary is available for ${cleanCompany} right now.`;
+    }
+
+    if (!GEMINI_API_KEY) {
+        return `Recent updates for ${cleanCompany} are listed below. Gemini summary is unavailable because the API key is missing.`;
+    }
+
+    const prompt = [
+        `Summarize the latest company-specific news for ${cleanCompany} (${cleanSymbol}).`,
+        'Write exactly 5 short bullet points in simple language for retail investors.',
+        'Cover: current stock performance, what the latest news says, key opportunity, key risk, and whether the stock looks stronger/weaker/unclear right now.',
+        'Do not give absolute financial advice or guaranteed predictions. Use balanced language like "looks constructive", "needs caution", or "mixed signals".',
+        'Do not use markdown headings. Keep the total under 180 words.',
+        '',
+        `Latest quote data: ${JSON.stringify(quote || {}, null, 2)}`,
+        `News data: ${JSON.stringify(news.slice(0, 5), null, 2)}`,
+    ].join('\n');
+
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [{ text: prompt }],
+                        },
+                    ],
+                }),
+                cache: 'no-store',
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Gemini summary failed with status ${response.status}`);
+        }
+
+        const data = await response.json() as {
+            candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+        };
+
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        return text || `Recent updates for ${cleanCompany} are listed below.`;
+    } catch (err) {
+        console.error('getCompanyNewsSummary error:', err);
+        return `Recent updates for ${cleanCompany} are listed below.`;
     }
 }

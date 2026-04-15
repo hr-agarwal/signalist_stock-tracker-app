@@ -23,6 +23,45 @@ async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T>
 
 export { fetchJSON };
 
+// This searches Finnhub for matching stock symbols and returns clean app-friendly results.
+export async function searchStocks(query: string): Promise<Stock[]> {
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) return [];
+
+    try {
+        const url = `${FINNHUB_BASE_URL}/search?q=${encodeURIComponent(trimmedQuery)}&token=${NEXT_PUBLIC_FINNHUB_API_KEY}`;
+        const data = await fetchJSON<FinnhubSearchResponse>(url, 300);
+        const seen = new Set<string>();
+
+        return (data.result || [])
+            .filter((item) => item.symbol && item.description)
+            .filter((item) => {
+                const symbol = item.displaySymbol || item.symbol;
+                if (seen.has(symbol)) return false;
+                seen.add(symbol);
+                return true;
+            })
+            .slice(0, 12)
+            .map((item) => {
+                const displaySymbol = item.displaySymbol || item.symbol;
+                const exchange = displaySymbol.includes(':')
+                    ? displaySymbol.split(':')[0]
+                    : 'Global';
+
+                return {
+                    symbol: displaySymbol,
+                    name: item.description,
+                    exchange,
+                    type: item.type || 'Stock',
+                };
+            });
+    } catch (err) {
+        console.error('searchStocks error:', err);
+        return [];
+    }
+}
+
 // This gets market news, using watchlist symbols first and general news as a fallback.
 export async function getNews(symbols?: string[]): Promise<MarketNewsArticle[]> {
     try {

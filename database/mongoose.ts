@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI?.trim();
 
 declare global {
     var mongooseCache:{
@@ -22,7 +22,11 @@ export const connectToDatabase = async () => {
     if(cached.conn) return cached.conn;
 
     if(!cached.promise){
-        cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false});
+        cached.promise = mongoose.connect(MONGODB_URI, {
+            bufferCommands: false,
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 10000,
+        });
     }
 
     try{

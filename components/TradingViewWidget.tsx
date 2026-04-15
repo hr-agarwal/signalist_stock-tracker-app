@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef, memo } from 'react';
+import { memo } from 'react';
 import useTradingViewWidget from "@/hooks/useTradingViewWidget";
 import {cn} from "@/lib/utils";
 
 interface TradingViewWidgetProps {
     title?: string;
+    eyebrow?: string;
+    description?: string;
     scriptUrl: string;
     config: Record<string, unknown>;
     height?: number;
@@ -13,18 +15,35 @@ interface TradingViewWidgetProps {
 }
 
 // This shows one TradingView widget and lets the hook mount the external script inside it.
-const TradingViewWidget = ({title, scriptUrl, config, height= 600, className}: TradingViewWidgetProps)=> {
+const TradingViewWidget = ({
+    title,
+    eyebrow,
+    description,
+    scriptUrl,
+    config,
+    height= 600,
+    className,
+}: TradingViewWidgetProps)=> {
     const containerRef = useTradingViewWidget( scriptUrl, config, height);
 
 
 
     return (
-        <div className="w-full">
-            {title && <h3 className="font-semibold text-2xl text-gray-100 mb-5">{title}</h3>}
-           <div className={cn('tradingview-widget-container', className)} ref={containerRef}>
+        <section className="dashboard-card w-full">
+            {(eyebrow || title || description) && (
+                <div className="dashboard-card-header">
+                    <div>
+                        {eyebrow && <p className="dashboard-card-eyebrow">{eyebrow}</p>}
+                        {title && <h3 className="dashboard-card-title">{title}</h3>}
+                        {description && <p className="dashboard-card-description">{description}</p>}
+                    </div>
+                    <span className="dashboard-card-badge">Live</span>
+                </div>
+            )}
+           <div className={cn('tradingview-widget-container dashboard-widget-frame', className)} ref={containerRef}>
               <div className="tradingview-widget-container__widget" style={{ height, width: "100%" }}/>
            </div>
-        </div>
+        </section>
     );
 }
 

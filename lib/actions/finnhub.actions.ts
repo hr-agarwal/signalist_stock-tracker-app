@@ -23,6 +23,42 @@ async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T>
 
 export { fetchJSON };
 
+function formatInstrumentLabel(rawType: string | undefined, exchange: string): string {
+    const normalizedType = (rawType || '').trim();
+
+    if (!normalizedType) {
+        return 'Stock';
+    }
+
+    const lowerType = normalizedType.toLowerCase();
+
+    if (lowerType === 'common stock' || lowerType === 'stock' || lowerType === 'equity') {
+        return 'Stock';
+    }
+
+    if (lowerType === 'etf' || lowerType === 'etp') {
+        return 'ETF';
+    }
+
+    if (lowerType === 'adr') {
+        return 'ADR';
+    }
+
+    if (lowerType === 'preferred stock') {
+        return 'Preferred';
+    }
+
+    if (lowerType === 'mutual fund') {
+        return 'Fund';
+    }
+
+    if (lowerType === 'index') {
+        return 'Index';
+    }
+
+    return normalizedType;
+}
+
 // This searches Finnhub for matching stock symbols and returns clean app-friendly results.
 export async function searchStocks(query: string): Promise<Stock[]> {
     const trimmedQuery = query.trim();
@@ -53,7 +89,7 @@ export async function searchStocks(query: string): Promise<Stock[]> {
                     symbol: displaySymbol,
                     name: item.description,
                     exchange,
-                    type: item.type || 'Stock',
+                    type: formatInstrumentLabel(item.type, exchange),
                 };
             });
     } catch (err) {

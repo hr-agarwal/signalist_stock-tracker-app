@@ -75,6 +75,15 @@ const StockSearch = ({ initialWatchlistSymbols = [] }: { initialWatchlistSymbols
 
     const popularSymbols = POPULAR_STOCK_SYMBOLS.slice(0, 12);
     const hasQuery = query.trim().length > 0;
+    const statusLabel = !hasQuery
+        ? 'Type to search'
+        : isLoading
+            ? 'Searching symbols...'
+            : error
+                ? 'Search unavailable'
+                : results.length > 0
+                    ? `${results.length} live match${results.length === 1 ? '' : 'es'}`
+                    : 'No matches yet';
 
     const handleWatchlistChange = (symbol: string, isAdded: boolean) => {
         const normalizedSymbol = symbol.toUpperCase();
@@ -104,11 +113,29 @@ const StockSearch = ({ initialWatchlistSymbols = [] }: { initialWatchlistSymbols
                 </div>
                 <div className="search-hero-badge">
                     <TrendingUp className="h-5 w-5 text-teal-400" />
-                    <span>Live symbol lookup</span>
+                    <span>{statusLabel}</span>
                 </div>
             </div>
 
             <div className="search-shell">
+                <div className="search-summary">
+                    <span className="search-summary-label">Quick guide</span>
+                    <div className="search-summary-items">
+                        <span className="search-summary-chip">
+                            <strong>Stock</strong>
+                            <span>Company share</span>
+                        </span>
+                        <span className="search-summary-chip">
+                            <strong>ETF</strong>
+                            <span>Basket of stocks</span>
+                        </span>
+                        <span className="search-summary-chip">
+                            <strong>ADR</strong>
+                            <span>Foreign stock in US</span>
+                        </span>
+                    </div>
+                </div>
+
                 <div className="search-input-wrapper">
                     <Search className="search-input-icon" />
                     <input

@@ -15,6 +15,9 @@ type WatchlistRecord = {
 // This resolves the signed-in user from Better Auth so watchlist actions stay server-trusted.
 async function getCurrentUserContext() {
     const auth = await getAuth();
+
+    if (!auth) return null;
+
     const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session?.user?.email) return null;
@@ -98,9 +101,9 @@ export async function getWatchlistItemsForCurrentUser(): Promise<WatchlistRecord
 
 // This adds a stock to the signed-in user's watchlist and refreshes the relevant pages.
 export async function addToWatchlist({
-    symbol,
-    company,
-}: {
+                                         symbol,
+                                         company,
+                                     }: {
     symbol: string;
     company: string;
 }) {

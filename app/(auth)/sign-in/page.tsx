@@ -7,6 +7,7 @@ import FooterLink from '@/components/forms/FooterLink';
 import { authClient } from "@/lib/better-auth/client";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
+import {ArrowRight, LockKeyhole} from "lucide-react";
 
 // This renders the sign-in form and logs the user in on submit.
 const SignIn = () => {
@@ -50,7 +51,16 @@ const SignIn = () => {
 
     return (
         <>
-            <h1 className="form-title">Welcome back</h1>
+            <div className="auth-form-heading">
+                <span className="auth-form-badge">
+                    <LockKeyhole className="h-4 w-4" />
+                    Secure access
+                </span>
+                <h1 className="form-title">Welcome back</h1>
+                <p className="form-subtitle">
+                    Sign in to continue tracking watchlists, alerts, and market signals.
+                </p>
+            </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <InputField
@@ -78,8 +88,9 @@ const SignIn = () => {
                     validation={{ required: 'Password is required', minLength: 8 }}
                 />
 
-                <Button type="submit" disabled={isSubmitting} className="yellow-btn w-full mt-5">
-                    {isSubmitting ? 'Signing In' : 'Sign In'}
+                <Button type="submit" disabled={isSubmitting} className="yellow-btn w-full mt-5 auth-submit-btn">
+                    <span>{isSubmitting ? 'Signing In' : 'Sign In'}</span>
+                    <ArrowRight className="h-4 w-4" />
                 </Button>
 
                 <FooterLink text="Don't have an account?" linkText="Create an account" href="/sign-up" />

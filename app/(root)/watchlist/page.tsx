@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from 'next/link';
 import { Sparkles, Star } from 'lucide-react';
 import WatchlistRowActions from '@/components/WatchlistRowActions';

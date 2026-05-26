@@ -1,4 +1,7 @@
+
 'use client';
+
+export const dynamic = "force-dynamic";
 
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';

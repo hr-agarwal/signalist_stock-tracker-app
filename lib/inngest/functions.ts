@@ -11,8 +11,10 @@ export { inngest } from "@/lib/inngest/client";
 
 // This workflow generates and sends the welcome email after signup.
 export const sendSignUpEmail = inngest.createFunction(
-    { id: "sign-up-email" },
-    { event: "app/user.created" },
+    {
+        id: "sign-up-email",
+        triggers: { event: "app/user.created" },
+    },
     async ({ event , step }) => {
 
         const userProfile = `
@@ -57,8 +59,10 @@ export const sendSignUpEmail = inngest.createFunction(
 
 // This workflow builds and sends a daily market news email for each user.
 export const sendDailyNewsSummary = inngest.createFunction(
-    { id: "daily-news-summary" },
-    [{event: 'app/send.daily.news' },{cron: '0 12 * * *'}],
+    {
+        id: "daily-news-summary",
+        triggers: [{event: 'app/send.daily.news' },{cron: '0 12 * * *'}],
+    },
     async ({step }) => {
         // step #1: Get all users for news delivery
         const users = await step.run('get-all-users', getAllUsersForNewsEmail) as UserForNewsEmail[];
@@ -94,8 +98,9 @@ export const sendDailyNewsSummary = inngest.createFunction(
                 for(const{user, articles} of results){
                     try{
                       const prompt = NEWS_SUMMARY_EMAIL_PROMPT.replace('{{newsData}}',JSON.stringify(articles, null , 2));
+                      const safeEmail = user.email.replace(/[^a-zA-Z0-9-_]/g, "_");
 
-                      const response = await step.ai.infer(`summarize-news-${user.email}`,{
+                      const response = await step.ai.infer(`summarize-news-${safeEmail}`,{
                           model: step.ai.models.gemini({ model: "gemini-2.5-flash" }),
                           body: {
                               contents: [{role: 'user', parts: [{ text: prompt }]}]

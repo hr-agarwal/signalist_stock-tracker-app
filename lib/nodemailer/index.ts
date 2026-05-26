@@ -18,7 +18,7 @@ export const sendWelcomeEmail = async ({email,name,intro}: WelcomeEmailData) => 
         .replace('{{intro}}',intro);
 
     const mailOptions = {
-        from: `"Signalist" <signalist@market.pro>`,
+        from: `"Signalist" <${process.env.NODEMAILER_EMAIL}>`,
         to: email,
         subject: `Welcome to Signalist - your stock market toolkit is ready!`,
         text: 'Thanks for joining Signalist',
@@ -35,7 +35,7 @@ export const sendNewsSummaryEmail = async (
         .replace('{{date}}',date)
         .replace('{{newsContent}}',newsContent);
     const mailOptions = {
-        from: `"Signalist News" <signalist@gmail.com>`,
+        from: `"Signalist News" <Signalist.Stock18@gmail.com>`,
         to: email,
         subject: `Market News Summary today - ${date}`,
         text: `Today's market news summary from Signalist` ,

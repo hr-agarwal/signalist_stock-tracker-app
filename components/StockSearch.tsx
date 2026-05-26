@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { useDeferredValue, useEffect, useState } from 'react';
 import { Loader2, Radar, Search, Sparkles, TrendingUp } from 'lucide-react';
 import { POPULAR_STOCK_SYMBOLS } from '@/lib/constants';
 import { useSearchParams } from 'next/navigation';
 import WatchlistButton from '@/components/WatchlistButton';
+import StockChartModal from '@/components/StockChartModal';
 
 type SearchResponse = {
     results: Stock[];
@@ -226,14 +226,7 @@ const StockSearch = ({ initialWatchlistSymbols = [] }: { initialWatchlistSymbols
                                         onWatchlistChange={handleWatchlistChange}
                                     />
 
-                                    <Link
-                                        href={`https://www.tradingview.com/symbols/${encodeURIComponent(stock.symbol.replace(':', '-'))}/`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="search-card-link"
-                                    >
-                                        Open chart
-                                    </Link>
+                                    <StockChartModal stock={stock} />
                                 </div>
                             </article>
                         ))}

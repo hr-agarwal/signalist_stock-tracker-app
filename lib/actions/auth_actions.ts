@@ -3,8 +3,20 @@
 import {getAuth} from "@/lib/better-auth/auth";
 import {inngest} from "@/lib/inngest/client";
 import {headers} from "next/headers";
+import {sendWelcomeEmail} from "@/lib/nodemailer";
 
-// This sends the post-signup event without blocking login if the email workflow fails.
+const buildWelcomeIntro = ({
+    country,
+    investmentGoals,
+    riskTolerance,
+    preferredIndustry,
+}: Pick<SignUpFormData, 'country' | 'investmentGoals' | 'riskTolerance' | 'preferredIndustry'>) => `
+<p class="mobile-text dark-text-secondary" style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6; color: #CCDADC;">
+    Your Signalist dashboard is ready. We will tune your experience around ${investmentGoals.toLowerCase()} investing, ${riskTolerance.toLowerCase()} risk tolerance, ${preferredIndustry.toLowerCase()} ideas, and market context for ${country}.
+</p>
+`;
+
+// This sends the welcome email immediately after signup and also reports failures to the caller.
 export const sendUserCreatedEvent = async ({
     email,
     fullName,
@@ -14,14 +26,30 @@ export const sendUserCreatedEvent = async ({
     preferredIndustry,
 }: SignUpFormData) => {
     try {
-        await inngest.send({
-            name: 'app/user.created',
-            data:{email, name: fullName, country, investmentGoals, riskTolerance, preferredIndustry}
+        await sendWelcomeEmail({
+            email,
+            name: fullName,
+            intro: buildWelcomeIntro({country, investmentGoals, riskTolerance, preferredIndustry}),
         });
-        return { success: true };
-    } catch (eventError) {
-        console.log('Sign-up event send failed', eventError);
-        return { success: false };
+
+        return { success: true, emailSent: true };
+    } catch (emailError) {
+        console.error('Welcome email send failed', emailError);
+
+        try {
+            await inngest.send({
+                name: 'app/user.created',
+                data:{email, name: fullName, country, investmentGoals, riskTolerance, preferredIndustry}
+            });
+        } catch (eventError) {
+            console.error('Sign-up event fallback send failed', eventError);
+        }
+
+        return {
+            success: false,
+            emailSent: false,
+            error: emailError instanceof Error ? emailError.message : 'Welcome email failed',
+        };
     }
 }
 

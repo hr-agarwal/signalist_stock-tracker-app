@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import { Toaster} from "@/components/ui/sonner";
+import { Analytics } from '@vercel/analytics/next';
 import "./globals.css";
 
 
@@ -39,6 +40,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster/>
+        <Analytics />
       </body>
     </html>
   );
